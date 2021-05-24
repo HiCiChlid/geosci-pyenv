@@ -114,7 +114,8 @@ RUN wget -qO - https://qgis.org/downloads/qgis-2020.gpg.key | gpg --no-default-k
 RUN chmod a+r /etc/apt/trusted.gpg.d/qgis-archive.gpg
 RUN add-apt-repository -y "deb https://qgis.org/ubuntu $(lsb_release -c -s) main"
 RUN apt -y update
-RUN apt -y install qgis qgis-plugin-grass
+RUN apt -y install qgis qgis-plugin-grass saga
+ENV PATH=$PATH:/usr/share/qgis/python/plugins:/usr/lib/qgis$PATH
 
 # set default homepath
 WORKDIR /home
