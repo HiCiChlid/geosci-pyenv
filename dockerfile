@@ -67,44 +67,44 @@ RUN apt-get install -y zlib1g-dev \
 ENV LLVM_CONFIG /usr/bin/llvm-config-10
 
 #  install python3 packages
-RUN pip3 install bs4 \ 
-&& pip3 install Django \ 
-&& pip3 install pandas \ 
-&& pip3 install findspark \ 
-&& pip3 install jupyter \ 
-&& pip3 install joblib \
-&& pip3 install psycopg2-binary \ 
-&& pip3 install scikit-learn\ 
-&& pip3 install pyemail  \ 
-&& pip3 install progressbar2 \ 
-&& pip3 install pyecharts \ 
-&& pip3 install pyspark \ 
-&& pip3 install requests \ 
-&& pip3 install Scrapy \ 
-&& pip3 install seaborn \ 
-&& pip3 install selenium \ 
-&& pip3 install sqlalchemy \
-&& pip3 install vector-2d \ 
-&& pip3 install pyarrow \ 
-&& pip3 install pydot \ 
-&& pip3 install pandarallel \ 
-&& pip3 install geopandas \ 
-&& pip3 install descartes \
-&& pip3 install yellowbrick \ 
-&& pip3 install xlrd \ 
-&& pip3 install xlwt \ 
-&& pip3 install wkhtmltopdf \ 
-&& pip3 install DateTime \ 
-&& pip3 install async-timeout \
-&& pip3 install tqdm \
-&& pip3 install networkx \
+RUN pip3 install bs4==0.0.1 \ 
+&& pip3 install Django==3.1.2 \ 
+&& pip3 install pandas==1.1.3 \ 
+&& pip3 install findspark==1.4.2 \ 
+&& pip3 install jupyter==1.0.0 \ 
+&& pip3 install joblib=0.17.0 \
+&& pip3 install psycopg2-binary==2.8.6 \ 
+&& pip3 install scikit-learn==0.23.2\ 
+&& pip3 install pyemail=0.0.1  \ 
+&& pip3 install progressbar2==3.53.1 \ 
+&& pip3 install pyecharts==1.8.1 \ 
+&& pip3 install pyspark==3.0.1 \ 
+&& pip3 install requests=2.18.4 \ 
+&& pip3 install Scrapy==2.3.0 \ 
+&& pip3 install seaborn==0.11.0 \ 
+&& pip3 install selenium==3.141.0 \ 
+&& pip3 install sqlalchemy==1.3.19 \
+&& pip3 install vector-2d==1.5.2 \ 
+&& pip3 install pyarrow==1.0.1 \ 
+&& pip3 install pydot==1.4.1 \ 
+&& pip3 install pandarallel==1.5.1 \ 
+&& pip3 install geopandas==0.8.1 \ 
+&& pip3 install descartes==1.1.0 \
+&& pip3 install yellowbrick==1.1 \ 
+&& pip3 install xlrd==1.2.0 \ 
+&& pip3 install xlwt==1.3.0 \ 
+&& pip3 install wkhtmltopdf==0.2 \ 
+&& pip3 install DateTime==4.3 \ 
+&& pip3 install async-timeout==3.0.1 \
+&& pip3 install tqdm==4.50.1 \
+&& pip3 install networkx==2.5 \
 && pip3 install prompt-toolkit==1.0.15 \
-&& pip3 install python-igraph \
-&& pip3 install sympy \
-&& pip3 install mgwr \
-&& pip3 install rtree \
-&& pip3 install pysal \
-&& pip3 install libpysal \
+&& pip3 install python-igraph==0.8.2 \
+&& pip3 install sympy==1.6.2 \
+&& pip3 install mgwr==2.1.2 \
+&& pip3 install rtree==0.9.4 \
+&& pip3 install pysal==2.3.0 \
+&& pip3 install libpysal==4.3.0 \
 && pip3 install nbconvert==5.4.1
 
 #  install Qgis
