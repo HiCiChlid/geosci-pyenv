@@ -88,7 +88,7 @@ RUN pip3 install bs4==0.0.1 \
 && pip3 install pyarrow==1.0.1 \ 
 && pip3 install pydot==1.4.1 \ 
 && pip3 install pandarallel==1.5.1 \ 
-&& pip3 install geopandas==0.8.1 \ 
+&& pip3 install geopandas \ 
 && pip3 install descartes==1.1.0 \
 && pip3 install yellowbrick==1.1 \ 
 && pip3 install xlrd==1.2.0 \ 
