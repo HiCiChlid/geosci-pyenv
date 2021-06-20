@@ -72,14 +72,14 @@ RUN pip3 install bs4==0.0.1 \
 && pip3 install pandas==1.1.3 \ 
 && pip3 install findspark==1.4.2 \ 
 && pip3 install jupyter==1.0.0 \ 
-&& pip3 install joblib=0.17.0 \
+&& pip3 install joblib==0.17.0 \
 && pip3 install psycopg2-binary==2.8.6 \ 
 && pip3 install scikit-learn==0.23.2\ 
-&& pip3 install pyemail=0.0.1  \ 
+&& pip3 install pyemail==0.0.1  \ 
 && pip3 install progressbar2==3.53.1 \ 
 && pip3 install pyecharts==1.8.1 \ 
 && pip3 install pyspark==3.0.1 \ 
-&& pip3 install requests=2.18.4 \ 
+&& pip3 install requests==2.18.4 \ 
 && pip3 install Scrapy==2.3.0 \ 
 && pip3 install seaborn==0.11.0 \ 
 && pip3 install selenium==3.141.0 \ 
