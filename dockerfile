@@ -19,7 +19,9 @@ RUN apt-get -y update \
     && apt-get remove -y vim-common \
     && apt-get install -y vim \
     && apt-get install -y git \
-    && apt-get install -y wget
+    && apt-get install -y wget \
+    && apt-get install -y libssl-dev \
+    && apt-get install -y libcurl4-openssl-dev
 
 # install ssh server about the remote operation
 RUN apt-get install -y openssh-server \
@@ -111,12 +113,24 @@ RUN pip3 install --upgrade pip \
 #  install Qgis
 RUN apt -y update
 RUN apt install -y gnupg software-properties-common
-RUN wget -qO - https://qgis.org/downloads/qgis-2020.gpg.key | gpg --no-default-keyring --keyring gnupg-ring:/etc/apt/trusted.gpg.d/qgis-archive.gpg --import
+RUN wget -qO - https://qgis.org/downloads/qgis-2021.gpg.key | gpg --no-default-keyring --keyring gnupg-ring:/etc/apt/trusted.gpg.d/qgis-archive.gpg --import
 RUN chmod a+r /etc/apt/trusted.gpg.d/qgis-archive.gpg
 RUN add-apt-repository -y "deb https://qgis.org/ubuntu $(lsb_release -c -s) main"
 RUN apt -y update
 RUN apt -y install qgis qgis-plugin-grass saga
 ENV PATH=$PATH:/usr/share/qgis/python/plugins:/usr/lib/qgis$PATH
+
+# install R 3.4
+#RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
+#RUN add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu xenial-cran35/'
+#RUN apt update
+RUN apt install -y r-base r-base-core r-recommended
+ENV PATH=$PATH:/usr/lib/R/lib$PATH
+RUN R -e "options(repos=structure( c(CRAN='https://cloud.r-project.org/')))"
+RUN R -e "install.packages('https://cran.r-project.org/src/contrib/Archive/pbdZMQ/pbdZMQ_0.3-0.tar.gz', type='source')"
+RUN R -e "install.packages(c('repr', 'IRdisplay', 'evaluate', 'crayon', 'devtools', 'uuid', 'digest'))"
+RUN R -e "devtools::install_github('IRkernel/IRkernel')"
+RUN R -e "IRkernel::installspec(user = FALSE)"
 
 # set default homepath
 WORKDIR /home
