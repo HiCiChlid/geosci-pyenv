@@ -49,3 +49,34 @@
    `docker exec -it [container_name] /bin/bash`
    
 8. you can use `sh jp.sh` to start Jupyter notebook.
+
+## How to use VScode to debug Python in Windows WSL sub-linux system:
+1. Download VScode(https://code.visualstudio.com/download) and install it.
+2. Search **Remote - Containers**, **Remote - WSL**, **Docker** from Extension Marketplace.
+
+![image](https://user-images.githubusercontent.com/43268820/151297711-3e35211b-08f8-49ef-9585-09b2bfd6e16d.png)
+
+3. Click the Docker icon and start your container 
+ 
+![image](https://user-images.githubusercontent.com/43268820/151298384-4186c587-b125-4a88-b6d2-a8026d1b2e68.png)
+
+4. Click the green bar in the bottom 
+
+![image](https://user-images.githubusercontent.com/43268820/151298556-22e86a91-6bbf-4bff-91c5-e00bf275859e.png), 
+
+and choose `Attach to running container`
+
+![image](https://user-images.githubusercontent.com/43268820/151298644-a8737f2c-2a3a-4d71-ba4a-703db6757e78.png)
+ 
+and then choose the container with python3, and a new window will open.
+
+![image](https://user-images.githubusercontent.com/43268820/151299142-e7bca956-8c92-43b6-8e24-78f8083b0b3e.png)
+
+5. In new the new window, click the extension 
+
+![image](https://user-images.githubusercontent.com/43268820/151297711-3e35211b-08f8-49ef-9585-09b2bfd6e16d.png)
+
+ to search **Python** and install it. You can enjoy debuging your .py scripts. :)
+
+
+
