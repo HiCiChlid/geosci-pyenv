@@ -21,6 +21,8 @@ RUN apt-get -y update \
     && apt-get install -y git \
     && apt-get install -y wget \
     && apt-get install -y libssl-dev \
+    && apt-get install -y net-tools \
+    && apt-get install -y iputils-ping \
     && apt-get install -y libcurl4-openssl-dev
 
 # install ssh server about the remote operation
