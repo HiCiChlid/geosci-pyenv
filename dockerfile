@@ -28,7 +28,7 @@ RUN apt-get -y update \
 # install ssh server about the remote operation
 RUN apt-get install -y openssh-server \
     && mkdir /var/run/sshd \
-    && echo "root:249784435" | chpasswd
+    && echo "root:abcd1234" | chpasswd
 # container needs to open SSH 22 port for visiting from outsides.
 EXPOSE 22
 
