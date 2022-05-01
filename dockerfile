@@ -25,13 +25,6 @@ RUN apt-get -y update \
     && apt-get install -y iputils-ping \
     && apt-get install -y libcurl4-openssl-dev
 
-# install ssh server about the remote operation
-RUN apt-get install -y openssh-server \
-    && mkdir /var/run/sshd \
-    && echo "root:abcd1234" | chpasswd
-# container needs to open SSH 22 port for visiting from outsides.
-EXPOSE 22
-
 # install JAVA
 RUN apt-get install -y openjdk-8-jdk
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
@@ -134,11 +127,27 @@ RUN R -e "install.packages(c('repr', 'IRdisplay', 'evaluate', 'crayon', 'devtool
 RUN R -e "devtools::install_github('IRkernel/IRkernel')"
 RUN R -e "IRkernel::installspec(user = FALSE)"
 
+# install ssh server about the remote operation
+RUN apt-get install -y openssh-server \
+    && mkdir -p /var/run/sshd \
+    && echo "root:abc123" | chpasswd
+# allow rootssh login
+RUN sed -i "s/#\?PermitRootLogin no/PermitRootLogin yes/g" /etc/ssh/sshd_config
+RUN sed -i "s/#\?PermitRootLogin prohibit-password/PermitRootLogin yes/g" /etc/ssh/sshd_config
+RUN sed -i "s/#\?PermitRootLogin without-password/PermitRootLogin yes/g" /etc/ssh/sshd_config
+
+# container needs to open SSH 22 port for visiting from outsides.
+EXPOSE 22
+
+ENTRYPOINT service ssh restart && bash
+
 # set default homepath
 WORKDIR /home
 
 # create jupyter shortcuts
 RUN touch jp.sh \
 && echo jupyter notebook --ip=0.0.0.0 --no-browser --allow-root > jp.sh
+RUN touch gs.sh \
+&& echo ssh-keygen -t rsa -P \'\' -f ~/.ssh/id_rsa > gs.sh
 
 CMD /bin/bash
