@@ -33,10 +33,10 @@ ENV CLASSPATH $CLASSPATH:$JAVA_HOME/lib:$JRE_HOME/lib:$CLASSPATH
 
 # install spark
 WORKDIR /usr/local
-RUN wget "http://archive.apache.org/dist/spark/spark-2.4.5/spark-2.4.5-bin-hadoop2.7.tgz" \
+RUN wget "https://archive.apache.org/dist/spark/spark-3.2.1/spark-3.2.1-bin-hadoop2.7.tgz" \
     && tar -vxf spark-* \
-    && mv spark-2.4.5-bin-hadoop2.7 spark \
-    && rm -rf spark-2.4.5-bin-hadoop2.7.tgz
+    && mv spark-3.2.1-bin-hadoop2.7 spark \
+    && rm -rf spark-3.2.1-bin-hadoop2.7.tgz
 ENV SPARK_HOME /usr/local/spark
 EXPOSE 6066 8080 7077 4044 18080 8888
 ENV PATH=$PATH:$JAVA_HOME/bin:$JRE_HOME/bin:$SPARK_HOME/bin$PATH
@@ -103,7 +103,8 @@ RUN pip3 install --upgrade pip \
 && pip3 install rtree==0.9.4 \
 && pip3 install pysal==2.3.0 \
 && pip3 install libpysal==4.3.0 \
-&& pip3 install nbconvert==5.4.1
+&& pip3 install nbconvert==5.4.1 \
+&& pip3 install koalas==1.8.2
 
 #  install Qgis
 RUN apt -y update
