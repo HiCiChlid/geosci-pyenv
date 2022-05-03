@@ -76,7 +76,7 @@ RUN pip3 install --upgrade pip \
 && pip3 install pyemail==0.0.1  \ 
 && pip3 install progressbar2==3.53.1 \ 
 && pip3 install pyecharts==1.8.1 \ 
-&& pip3 install pyspark==3.0.1 \ 
+&& pip3 install pyspark==3.2.1 \ 
 && pip3 install requests==2.18.4 \ 
 && pip3 install Scrapy==2.3.0 \ 
 && pip3 install seaborn==0.11.0 \ 
@@ -103,8 +103,7 @@ RUN pip3 install --upgrade pip \
 && pip3 install rtree==0.9.4 \
 && pip3 install pysal==2.3.0 \
 && pip3 install libpysal==4.3.0 \
-&& pip3 install nbconvert==5.4.1 \
-&& pip3 install koalas==1.8.2
+&& pip3 install nbconvert==5.4.1
 
 #  install Qgis
 RUN apt -y update
