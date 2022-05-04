@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 
 #user
 #USER root
@@ -51,7 +51,7 @@ ENV PATH=$PATH:$JAVA_HOME/bin:$JRE_HOME/bin:$SPARK_HOME/bin:$HADOOP_HOME/bin:$HA
 EXPOSE 50010 50075 50475 50020 50070 50470 8020 8485 8480 8019
 
 # install python3
-RUN apt install -y python3.6 \
+RUN apt install -y python3.8 \
 && apt install -y ipython3 \
 && apt install -y python3-pip
 
@@ -149,7 +149,7 @@ ENTRYPOINT service ssh restart && bash
 
 # set default homepath and default python
 WORKDIR /home
-RUN ln -sf /usr/bin/python3.6 /usr/bin/python \
+RUN ln -sf /usr/bin/python3.8 /usr/bin/python \
     && ln -sf /usr/bin/pip3 /usr/bin/pip
     
 # create jupyter shortcuts
