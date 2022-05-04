@@ -39,14 +39,21 @@ RUN wget "https://archive.apache.org/dist/spark/spark-3.2.1/spark-3.2.1-bin-hado
     && rm -rf spark-3.2.1-bin-hadoop2.7.tgz
 ENV SPARK_HOME /usr/local/spark
 EXPOSE 6066 8080 7077 4044 18080 8888
-ENV PATH=$PATH:$JAVA_HOME/bin:$JRE_HOME/bin:$SPARK_HOME/bin$PATH
+
+# install hadoop
+WORKDIR /usr/local
+RUN wget "http://archive.apache.org/dist/hadoop/core/hadoop-2.7.7/hadoop-2.7.7.tar.gz" \
+    && tar -vxf hadoop-* \
+    && mv hadoop-2.7.7 hadoop \
+    && rm -rf hadoop-2.7.7.tar.gz
+ENV HADOOP_HOME /usr/local/hadoop
+ENV PATH=$PATH:$JAVA_HOME/bin:$JRE_HOME/bin:$SPARK_HOME/bin:$HADOOP_HOME/bin:$HADOOP_HOME/sbin$PATH
+EXPOSE 50010 50075 50475 50020 50070 50470 8020 8485 8480 8019
 
 # install python3
-RUN apt install -y python3.6 \
+RUN apt install -y python3.8 \
 && apt install -y ipython3 \
-&& apt install -y python3-pip \
-&& ln -sf /usr/bin/python3.6 /usr/bin/python \
-&& ln -sf /usr/bin/pip3 /usr/bin/pip
+&& apt install -y python3-pip
 
 # install the dependence of igraph, rtree, geopandas, pysal 
 RUN apt-get install -y zlib1g-dev \
@@ -138,12 +145,13 @@ RUN sed -i "s/#\?PermitRootLogin without-password/PermitRootLogin yes/g" /etc/ss
 
 # container needs to open SSH 22 port for visiting from outsides.
 EXPOSE 22
-
 ENTRYPOINT service ssh restart && bash
 
-# set default homepath
+# set default homepath and default python
 WORKDIR /home
-
+RUN ln -sf /usr/bin/python3.8 /usr/bin/python \
+    && ln -sf /usr/bin/pip3 /usr/bin/pip
+    
 # create jupyter shortcuts
 RUN touch jp.sh \
 && echo jupyter notebook --ip=0.0.0.0 --no-browser --allow-root > jp.sh
