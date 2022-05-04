@@ -76,7 +76,7 @@ RUN pip3 install --upgrade pip \
 && pip3 install Django==3.1.2 \ 
 && pip3 install pandas==1.1.3 \ 
 && pip3 install findspark==1.4.2 \ 
-&& pip3 install jupyter==1.0.0 \ 
+&& pip3 install jupyter \ 
 && pip3 install joblib==0.17.0 \
 && pip3 install psycopg2-binary==2.8.6 \ 
 && pip3 install scikit-learn==0.23.2\ 
