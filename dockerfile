@@ -115,7 +115,7 @@ RUN pip3 install --upgrade pip \
 #  install Qgis
 RUN apt -y update
 RUN apt install -y gnupg software-properties-common
-RUN wget -qO - https://qgis.org/downloads/qgis-2021.gpg.key | gpg --no-default-keyring --keyring gnupg-ring:/etc/apt/trusted.gpg.d/qgis-archive.gpg --import
+RUN wget -qO - https://qgis.org/downloads/qgis-2022.gpg.key | gpg --no-default-keyring --keyring gnupg-ring:/etc/apt/trusted.gpg.d/qgis-archive.gpg --import
 RUN chmod a+r /etc/apt/trusted.gpg.d/qgis-archive.gpg
 RUN add-apt-repository -y "deb https://qgis.org/ubuntu $(lsb_release -c -s) main"
 RUN apt -y update
