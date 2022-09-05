@@ -130,8 +130,8 @@ RUN apt install -y r-base r-base-core r-recommended
 ENV PATH=$PATH:/usr/lib/R/lib$PATH
 RUN R -e "options(repos=structure( c(CRAN='https://cloud.r-project.org/')))"
 RUN R -e "install.packages('https://cran.r-project.org/src/contrib/Archive/pbdZMQ/pbdZMQ_0.3-0.tar.gz', type='source')"
-RUN R -e "install.packages(c('repr', 'IRdisplay', 'evaluate', 'crayon', 'devtools', 'uuid', 'digest'))"
-RUN R -e "devtools::install_github('IRkernel/IRkernel')"
+RUN R -e "install.packages(c('repr', 'IRdisplay', 'evaluate', 'crayon', 'devtools', 'uuid', 'digest', 'IRkernel'))"
+# RUN R -e "devtools::install_github('IRkernel/IRkernel')"
 RUN R -e "IRkernel::installspec(user = FALSE)"
 
 # install ssh server about the remote operation
