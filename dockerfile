@@ -122,10 +122,11 @@ RUN apt -y update
 RUN apt -y install qgis qgis-plugin-grass saga
 ENV PATH=$PATH:/usr/share/qgis/python/plugins:/usr/lib/qgis$PATH
 
-# install R 3.4
-#RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
-#RUN add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu xenial-cran35/'
-#RUN apt update
+# install R
+RUN apt install -y dirmngr
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
+RUN add-apt-repository "deb https://cloud.r-project.org/bin/linux/ubuntu $(lsb_release -cs)-cran40/"
+RUN apt update
 RUN apt install -y r-base r-base-core r-recommended
 ENV PATH=$PATH:/usr/lib/R/lib$PATH
 RUN R -e "options(repos=structure( c(CRAN='https://cloud.r-project.org/')))"
