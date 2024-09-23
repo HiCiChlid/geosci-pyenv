@@ -1,162 +1,121 @@
-FROM ubuntu:18.04
+FROM manjarolinux/base:latest
 
-#user
-#USER root
-
-#encoding
+# Set locale and timezone
 ENV LANG=C.UTF-8
 ENV TZ=Asia/Shanghai
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-# change to Mainland apt update source
-#RUN sed -i s@/archive.ubuntu.com/@/mirrors.aliyun.com/@g /etc/apt/sources.list \
-#    && apt-get clean \
-#    && apt-get update
+# Update and install tools and dependencies
+RUN pacman -Sy --noconfirm \
+    vim git wget jre-openjdk \
+    python python-pip ipython \
+    zlib libxml2 base-devel \
+    gcc llvm llvm-libs \
+    cairo libtool m4 automake bison flex \
+    igraph spatialindex \
+    openssh gnupg zsh powerline powerline-fonts powerline-vim
+    
+RUN git clone https://github.com/ohmyzsh/ohmyzsh.git ~/.oh-my-zsh && \
+    cp ~/.oh-my-zsh/templates/zshrc.zsh-template ~/.zshrc
 
-# install some tools
-RUN apt-get -y update \
-    && apt-get install -y --no-install-recommends apt-utils \
-    && apt-get remove -y vim-common \
-    && apt-get install -y vim \
-    && apt-get install -y git \
-    && apt-get install -y wget \
-    && apt-get install -y libssl-dev \
-    && apt-get install -y net-tools \
-    && apt-get install -y iputils-ping \
-    && apt-get install -y libcurl4-openssl-dev
+# 设置主题为 agnoster
+RUN echo "ZSH_THEME=\"agnoster\"" >> ~/.zshrc
 
-# install JAVA
-RUN apt-get install -y openjdk-8-jdk
-ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
-ENV JRE_HOME $JAVA_HOME/jre
-ENV CLASSPATH $CLASSPATH:$JAVA_HOME/lib:$JRE_HOME/lib:$CLASSPATH
+# 安装 Powerline 相关配置
+RUN echo "powerline-daemon -q" >> ~/.zshrc && \
+echo "POWERLINE_BASH_CONTINUATION=1" >> ~/.zshrc && \
+echo "POWERLINE_BASH_SELECT=1" >> ~/.zshrc && \
+echo "source /usr/share/powerline/bindings/zsh/powerline.zsh" >> ~/.zshrc
 
-# install spark
+# 配置字体（确保终端字体支持 powerline）
+#RUN mkdir -p ~/.local/share/fonts && \
+#    cp /usr/share/fonts/TTF/* ~/.local/share/fonts/ && \
+#    fc-cache -vf ~/.local/share/fonts/
+
+# Clean up
+RUN pacman -Scc --noconfirm
+
+# Install Miniconda
+WORKDIR /tmp
+RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh && \
+    bash miniconda.sh -b -p /opt/conda && \
+    rm miniconda.sh
+
+# Update Conda and configure the path
+ENV PATH=/opt/conda/bin:$PATH
+RUN conda update -n base -c defaults conda
+
+# Create a Conda environment and install packages
+RUN conda create -y -n myenv python=3.10 && \
+    conda install -n myenv -y \
+    beautifulsoup4 \
+    django \
+    pandas \
+    jupyter \
+    joblib \
+    psycopg2 \
+    scikit-learn \
+    requests \
+    scrapy \
+    seaborn \
+    sqlalchemy \
+    pyarrow \
+    pydot \
+    pandarallel \
+    geopandas \
+    descartes \
+    yellowbrick \
+    xlrd \
+    xlwt \
+    tqdm \
+    networkx \
+    conda-forge::python-igraph \
+    conda-forge::libgdal \
+    sympy \
+    mgwr \
+    rtree \
+    pysal \
+    libpysal \
+    nbconvert \
+    pymc3 \
+    plotly \
+    conda-forge::powerline-status
+
+# Install Spark
 WORKDIR /usr/local
-RUN wget "https://archive.apache.org/dist/spark/spark-3.2.1/spark-3.2.1-bin-hadoop2.7.tgz" \
-    && tar -vxf spark-* \
-    && mv spark-3.2.1-bin-hadoop2.7 spark \
-    && rm -rf spark-3.2.1-bin-hadoop2.7.tgz
+RUN wget "https://archive.apache.org/dist/spark/spark-3.2.1/spark-3.2.1-bin-hadoop2.7.tgz" && \
+    tar -xvzf spark-3.2.1-bin-hadoop2.7.tgz && \
+    mv spark-3.2.1-bin-hadoop2.7 spark && \
+    rm spark-3.2.1-bin-hadoop2.7.tgz
+
+# Install Hadoop
+RUN wget "http://archive.apache.org/dist/hadoop/core/hadoop-2.7.7/hadoop-2.7.7.tar.gz" && \
+    tar -xvzf hadoop-2.7.7.tar.gz && \
+    mv hadoop-2.7.7 hadoop && \
+    rm hadoop-2.7.7.tar.gz
+
+ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk
 ENV SPARK_HOME /usr/local/spark
-EXPOSE 6066 8080 7077 4044 18080 8888
-
-# install hadoop
-WORKDIR /usr/local
-RUN wget "http://archive.apache.org/dist/hadoop/core/hadoop-2.7.7/hadoop-2.7.7.tar.gz" \
-    && tar -vxf hadoop-* \
-    && mv hadoop-2.7.7 hadoop \
-    && rm -rf hadoop-2.7.7.tar.gz
 ENV HADOOP_HOME /usr/local/hadoop
-ENV PATH=$PATH:$JAVA_HOME/bin:$JRE_HOME/bin:$SPARK_HOME/bin:$HADOOP_HOME/bin:$HADOOP_HOME/sbin$PATH
+ENV PATH=$PATH:$JAVA_HOME/bin:$SPARK_HOME/bin:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
+
+# SSH server setup
+RUN mkdir -p /var/run/sshd && echo "root:abc123" | chpasswd && \
+    sed -i "s/#\?PermitRootLogin no/PermitRootLogin yes/g" /etc/ssh/sshd_config
+
+# Expose ports
+EXPOSE 22
+EXPOSE 6066 8080 7077 4044 18080 8888
 EXPOSE 50010 50075 50475 50020 50070 50470 8020 8485 8480 8019
 
-# install python3
-RUN apt install -y python3.6 \
-&& apt install -y ipython3 \
-&& apt install -y python3-pip
-
-# install the dependence of igraph, rtree, geopandas, pysal 
-RUN apt-get install -y zlib1g-dev \
-    && apt-get install -y libxml2-dev \
-    && apt-get install -y build-essential \ 
-    && apt-get install -y libffi-dev \
-    && apt-get install -y libcairo-dev \
-    && apt-get install -y libtool \
-    && apt-get install -y m4 \
-    && apt-get install -y automake \
-    && apt-get install -y bison flex \
-    && apt-get install -y libigraph0-dev \
-    && apt-get install -y libspatialindex-dev \
-    && apt-get install -y libllvm-10-ocaml-dev libllvm10 llvm-10 llvm-10-dev llvm-10-doc llvm-10-examples llvm-10-runtime
-ENV LLVM_CONFIG /usr/bin/llvm-config-10
-
-#  install python3 packages
-RUN pip3 install --upgrade pip \
-&& pip3 install bs4==0.0.1 \ 
-&& pip3 install Django==3.1.2 \ 
-&& pip3 install pandas==1.1.3 \ 
-&& pip3 install findspark==1.4.2 \ 
-&& pip3 install jupyter \ 
-&& pip3 install joblib==0.17.0 \
-&& pip3 install psycopg2-binary==2.8.6 \ 
-&& pip3 install scikit-learn==0.23.2\ 
-&& pip3 install pyemail==0.0.1  \ 
-&& pip3 install progressbar2==3.53.1 \ 
-&& pip3 install pyecharts==1.8.1 \ 
-&& pip3 install pyspark==3.2.1 \ 
-&& pip3 install requests==2.18.4 \ 
-&& pip3 install Scrapy==2.3.0 \ 
-&& pip3 install seaborn==0.11.0 \ 
-&& pip3 install selenium==3.141.0 \ 
-&& pip3 install sqlalchemy==1.3.19 \
-&& pip3 install vector-2d==1.5.2 \ 
-&& pip3 install pyarrow==1.0.1 \ 
-&& pip3 install pydot==1.4.1 \ 
-&& pip3 install pandarallel==1.5.1 \ 
-&& pip3 install geopandas==0.8.1 \ 
-&& pip3 install descartes==1.1.0 \
-&& pip3 install yellowbrick==1.1 \ 
-&& pip3 install xlrd==1.2.0 \ 
-&& pip3 install xlwt==1.3.0 \ 
-&& pip3 install wkhtmltopdf==0.2 \ 
-&& pip3 install DateTime==4.3 \ 
-&& pip3 install async-timeout==3.0.1 \
-&& pip3 install tqdm==4.50.1 \
-&& pip3 install networkx==2.5 \
-&& pip3 install prompt-toolkit==1.0.15 \
-&& pip3 install python-igraph==0.8.2 \
-&& pip3 install sympy==1.6.2 \
-&& pip3 install mgwr==2.1.2 \
-&& pip3 install rtree==0.9.4 \
-&& pip3 install pysal==2.3.0 \
-&& pip3 install libpysal==4.3.0 \
-&& pip3 install nbconvert==5.4.1
-
-#  install Qgis
-RUN apt -y update
-RUN apt install -y gnupg software-properties-common
-RUN wget -qO - https://qgis.org/downloads/qgis-2022.gpg.key | gpg --no-default-keyring --keyring gnupg-ring:/etc/apt/trusted.gpg.d/qgis-archive.gpg --import
-RUN chmod a+r /etc/apt/trusted.gpg.d/qgis-archive.gpg
-RUN add-apt-repository -y "deb https://qgis.org/ubuntu $(lsb_release -c -s) main"
-RUN apt -y update
-RUN apt -y install qgis qgis-plugin-grass saga
-ENV PATH=$PATH:/usr/share/qgis/python/plugins:/usr/lib/qgis$PATH
-
-# install R
-RUN apt install -y dirmngr
-RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
-RUN add-apt-repository "deb https://cloud.r-project.org/bin/linux/ubuntu $(lsb_release -cs)-cran40/"
-RUN apt update
-RUN apt install -y r-base r-base-core r-recommended
-ENV PATH=$PATH:/usr/lib/R/lib$PATH
-RUN R -e "options(repos=structure( c(CRAN='https://cloud.r-project.org/')))"
-RUN R -e "install.packages('https://cran.r-project.org/src/contrib/Archive/pbdZMQ/pbdZMQ_0.3-0.tar.gz', type='source')"
-RUN R -e "install.packages(c('repr', 'IRdisplay', 'evaluate', 'crayon', 'devtools', 'uuid', 'digest', 'IRkernel'))"
-# RUN R -e "devtools::install_github('IRkernel/IRkernel')"
-RUN R -e "IRkernel::installspec(user = FALSE)"
-
-# install ssh server about the remote operation
-RUN apt-get install -y openssh-server \
-    && mkdir -p /var/run/sshd \
-    && echo "root:abc123" | chpasswd
-# allow rootssh login
-RUN sed -i "s/#\?PermitRootLogin no/PermitRootLogin yes/g" /etc/ssh/sshd_config
-RUN sed -i "s/#\?PermitRootLogin prohibit-password/PermitRootLogin yes/g" /etc/ssh/sshd_config
-RUN sed -i "s/#\?PermitRootLogin without-password/PermitRootLogin yes/g" /etc/ssh/sshd_config
-
-# container needs to open SSH 22 port for visiting from outsides.
-EXPOSE 22
-ENTRYPOINT service ssh restart && bash
-
-# set default homepath and default python
+# Set default homepath and default python in Conda environment
 WORKDIR /home
-RUN ln -sf /usr/bin/python3.6 /usr/bin/python \
-    && ln -sf /usr/bin/pip3 /usr/bin/pip
-    
-# create jupyter shortcuts
-RUN touch jp.sh \
-&& echo jupyter notebook --ip=0.0.0.0 --no-browser --allow-root > jp.sh
-RUN touch gs.sh \
-&& echo ssh-keygen -t rsa -P \'\' -f ~/.ssh/id_rsa > gs.sh
+RUN echo 'source activate myenv' > ~/.bashrc
 
-CMD /bin/bash
+# Create Jupyter shortcuts
+RUN echo 'jupyter notebook --ip=0.0.0.0 --no-browser --allow-root' > jp.sh && \
+    echo 'ssh-keygen -t rsa -P "" -f ~/.ssh/id_rsa' > gs.sh
+
+RUN chsh -s /bin/zsh
+
+CMD ["/bin/zsh"]
