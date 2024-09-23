@@ -1,7 +1,7 @@
 # geosci-pyenv
 
 ## Contents:
-1. python3
+1. python3.10
 2. R
 3. Spark
 4. QGIS
