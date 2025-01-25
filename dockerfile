@@ -110,7 +110,11 @@ RUN pip3 install --upgrade pip \
 && pip3 install rtree==0.9.4 \
 && pip3 install pysal==2.3.0 \
 && pip3 install libpysal==4.3.0 \
-&& pip3 install nbconvert==5.4.1
+&& pip3 install nbconvert==5.4.1 \
+&& pip3 install torch==1.10.2 \
+&& pip3 install torch_sparse==0.6.12 \
+&& pip3 install torch_scatter==2.0.9 \
+&& pip3 install torch_geometric==2.0.3
 
 #  install Qgis
 RUN apt -y update
